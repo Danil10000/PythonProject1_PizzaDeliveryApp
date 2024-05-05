@@ -7,14 +7,15 @@ def main(page: ft.Page):
     pizza_choice = ft.Dropdown(
         width=600,
         options=[
-            ft.dropdown.Option('Маргарита, стоимость: 550 рублей'),
-            ft.dropdown.Option('Сицилийская, стоимость: 520 рублей'),
-            ft.dropdown.Option('Пеперони, стоимость: 400 рублей'),
-            ft.dropdown.Option('С морепродуктами, стоимость: 500 рублей'),
-            ft.dropdown.Option('Гавайская, стоимость: 470 рублей'),
-            ft.dropdown.Option('Грибная, стоимость: 440 рублей'),
+            ft.dropdown.Option('Маргарита'),
+            ft.dropdown.Option('Сицилийская'),
+            ft.dropdown.Option('Пеперони'),
+            ft.dropdown.Option('С морепродуктами'),
+            ft.dropdown.Option('Гавайская'),
+            ft.dropdown.Option('Грибная'),
         ],
     )
+    pizza_price = ft.Text('')
     adress_of_payer = ft.TextField(label='Введите здесь свой адрес', width=500)
 
     def start(e):
@@ -34,8 +35,20 @@ def main(page: ft.Page):
         page.update
 
     def pizza_deliv(e):
+        if pizza_choice.value == 'Маргарита':
+            pizza_price.value = 550
+        elif pizza_choice.value == 'Сицилийская':
+            pizza_price.value = 520
+        elif pizza_choice.value == 'Пеперони':
+            pizza_price.value = 400
+        elif pizza_choice.value == 'С морепродуктами':
+            pizza_price.value = 500
+        elif pizza_choice.value == 'Гавайская':
+            pizza_price.value = 470
+        elif pizza_choice.value == 'Грибная':
+            pizza_price.value = 440
         page.add(
-            ft.Text(f" Заказ сохранён! Заказанная пицца: {pizza_choice.value}."),
+            ft.Text(f"Заказ сохранён! Заказанная пицца: {pizza_choice.value}, стоимоть: {pizza_price.value} рублей."),
             ft.ElevatedButton('Выбрать место доставки', on_click=adress)
         )
         page.update
@@ -49,7 +62,7 @@ def main(page: ft.Page):
 
     def end_screen(e):
         page.add(
-            ft.Text(f"Пицца {pizza_choice.value} будет доставлена по адресу {adress_of_payer.value} примерно через 40 минут."),
+            ft.Text(f"Пицца {pizza_choice.value} стоимостью {pizza_price.value} рублей будет доставлена по адресу {adress_of_payer.value} примерно через 40 минут."),
             ft.Text('Если хотите сделать новый заказ, перезапустите приложение, многоразовые заказы пока в разработке. Спасибо за использование нашего сервиса!')
         )
         page.update
