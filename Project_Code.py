@@ -14,6 +14,16 @@ def main(page: ft.Page):
             ft.dropdown.Option('Гавайская'),
             ft.dropdown.Option('Грибная'),
         ],
+        hint_text='Выберите пиццу',
+    )
+    pizza_size = ft.Dropdown(
+        width=150,
+        options=[
+            ft.dropdown.Option('24 см'),
+            ft.dropdown.Option('30 см'),
+            ft.dropdown.Option('40 см'),
+        ],
+        hint_text='Выберите размер пиццы',
     )
     pizza_price = ft.Text('')
     adress_of_payer = ft.TextField(label='Введите здесь свой адрес', width=500)
@@ -28,27 +38,52 @@ def main(page: ft.Page):
 
     def new_pizza(e):
         page.add(
-            ft.Text('Выберите в выпадающем списке рядом пиццу, которую хотите заказать'),
+            ft.Text('Выберите в выпадающем списке рядом пиццу, которую хотите заказать, и её размер.'),
             pizza_choice,
+            pizza_size,
             ft.ElevatedButton('Сохранить заказ', on_click=pizza_deliv),
         )
         page.update
 
     def pizza_deliv(e):
-        if pizza_choice.value == 'Маргарита':
-            pizza_price.value = 550
-        elif pizza_choice.value == 'Сицилийская':
-            pizza_price.value = 520
-        elif pizza_choice.value == 'Пеперони':
-            pizza_price.value = 400
-        elif pizza_choice.value == 'С морепродуктами':
+        if pizza_choice.value == 'Маргарита' and pizza_size.value == '24 cм':
             pizza_price.value = 500
-        elif pizza_choice.value == 'Гавайская':
+        elif pizza_choice.value == 'Маргарита' and pizza_size.value == '30 см':
+            pizza_price.value = 550
+        elif pizza_choice.value == 'Маргарита' and pizza_size.value == '40 см':
+            pizza_price.value = 600
+        elif pizza_choice.value == 'Сицилийская' and pizza_size.value == '24 cм':
             pizza_price.value = 470
-        elif pizza_choice.value == 'Грибная':
+        elif pizza_choice.value == 'Сицилийская' and pizza_size.value == '30 см':
+            pizza_price.value = 520
+        elif pizza_choice.value == 'Сицилийская' and pizza_size.value == '40 см':
+            pizza_price.value = 570
+        elif pizza_choice.value == 'Пеперони' and pizza_size.value == '24 cм':
+            pizza_price.value = 360
+        elif pizza_choice.value == 'Пеперони' and pizza_size.value == '30 см':
+            pizza_price.value = 400
+        elif pizza_choice.value == 'Пеперони' and pizza_size.value == '40 см':
+            pizza_price.value = 450
+        elif pizza_choice.value == 'С морепродуктами' and pizza_size.value == '24 cм':
+            pizza_price.value = 450
+        elif pizza_choice.value == 'С морепродуктами' and pizza_size.value == '30 см':
+            pizza_price.value = 500
+        elif pizza_choice.value == 'С морепродуктами' and pizza_size.value == '40 см':
+            pizza_price.value = 550
+        elif pizza_choice.value == 'Гавайская' and pizza_size.value == '24 cм':
+            pizza_price.value = 420
+        elif pizza_choice.value == 'Гавайская' and pizza_size.value == '30 см':
+            pizza_price.value = 470
+        elif pizza_choice.value == 'Гавайская' and pizza_size.value == '40 см':
+            pizza_price.value = 510
+        elif pizza_choice.value == 'Грибная' and pizza_size.value == '24 cм':
+            pizza_price.value = 400
+        elif pizza_choice.value == 'Грибная' and pizza_size.value == '30 см':
             pizza_price.value = 440
+        elif pizza_choice.value == 'Грибная' and pizza_size.value == '40 см':
+            pizza_price.value = 485
         page.add(
-            ft.Text(f"Заказ сохранён! Заказанная пицца: {pizza_choice.value}, стоимоть: {pizza_price.value} рублей."),
+            ft.Text(f"Заказ сохранён! Заказанная пицца: {pizza_choice.value}, размер: {pizza_size.value}, стоимоть: {pizza_price.value} рублей."),
             ft.ElevatedButton('Выбрать место доставки', on_click=adress)
         )
         page.update
