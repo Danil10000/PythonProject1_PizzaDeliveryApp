@@ -3,7 +3,8 @@ import flet as ft
 
 def main(page: ft.Page):
     greetings1 = ft.Text('Здравствуйте, пользователь! Вы зашли в программу для заказа пиццы.')
-    greetings2 = ft.Text('Чтобы сделать свой заказ, нажмите на кнопку ниже.')
+    greetings2 = ft.Text('Чтобы сделать свой заказ, нажмите на кнопку "Сделать новый заказ".')
+    greetings3 = ft.Text('Чтобы просмотреть меню нашего сервиса, нажмите кнопку "Показать меню".')
     pizza_choice = ft.Dropdown(
         width=600,
         options=[
@@ -25,6 +26,27 @@ def main(page: ft.Page):
         ],
         hint_text='Выберите размер пиццы',
     )
+    menu = ft.Text('                            Меню пиццы:\n'
+                   '\n'
+                   '       Пицца           24 см         30 см         40 см\n'
+                   '     Маргарита       500 рублей    550 рублей    600 рублей\n'
+                   '    Сицилийская      470 рублей    520 рублей    570 рублей\n'
+                   '     Пепперони       360 рублей    400 рублей    450 рублей\n'
+                   '  С морепродуктами   450 рублей    500 рублей    550 рублей\n'
+                   '     Гавайская       420 рублей    470 рублей    510 рублей\n'
+                   '      Грибная        400 рублей    440 рублей    485 рублей\n'
+                   '\n'
+                   '                      Меню дополнительных блюд:\n'
+                   '\n'
+                   '                  Блюдо                       Цена\n'
+                   '                 Кетчуп                     50 рублей\n'
+                   '                 Майонез                    50 рублей\n'
+                   '           Чай чёрный, 250 мл              100 рублей\n'
+                   '           Чай зелёный, 250 мл             100 рублей\n'
+                   '            Кока-Кола, 0.5 л               130 рублей\n'
+                   '              Картофель фри                170 рублей\n'
+                   '\n'
+                   'Теперь предлагаем вам сделать ваш заказ, нажав кнопку ниже.')
     pizza_price = ft.Text('')
     adding = ft.Dropdown(
         width=250,
@@ -39,24 +61,36 @@ def main(page: ft.Page):
         ],
     )
     adding_price = ft.Text('')
+    summary_price = ft.Text('')
     adress_of_payer = ft.TextField(label='Введите здесь свой адрес', width=500)
+
     def start(e):
         page.clean()
         page.add(
             greetings1,
             greetings2,
+            greetings3
+        )
+        page.add(ft.Row(controls=[ft.ElevatedButton('Сделать новый заказ', on_click=new_pizza), ft.ElevatedButton('Показать меню', on_click=menu_func)]))
+        page.update
+
+    def menu_func(e):
+        page.clean()
+        page.add(
+            menu,
             ft.ElevatedButton('Сделать новый заказ', on_click=new_pizza)
         )
-        page.update
+
     def new_pizza(e):
         page.clean()
         page.add(
             ft.Text('Выберите в выпадающем списке рядом пиццу, которую хотите заказать, и её размер.'),
             pizza_choice,
             pizza_size,
-            ft.ElevatedButton('Сохранить заказ', on_click=addings),
+            ft.ElevatedButton('Сохранить пиццу', on_click=addings),
         )
         page.update
+
     def addings(e):
         page.add(
             ft.Text('Выберите в выпадающем списке рядом добавочное блюдо.'),
@@ -64,6 +98,7 @@ def main(page: ft.Page):
             ft.ElevatedButton('Сохранить добавочное блюдо', on_click=pizza_agreeing)
         )
         page.update
+
     def pizza_agreeing(e):
         page.clean()
         if pizza_choice.value == 'Маргарита' and pizza_size.value == '24 cм':
@@ -113,35 +148,34 @@ def main(page: ft.Page):
         page.add(
             ft.Text(f"Заказ сохранён! Заказанная пицца: {pizza_choice.value}, размер: {pizza_size.value}, стоимоть пиццы: {pizza_price.value} рублей.")
         )
-        if adding.value == 'Ничего':
+        if adding.value != 'Ничего':
+            summary_price.value = pizza_price.value + adding_price.value
             page.add(
-                ft.ElevatedButton('Выбрать место доставки', on_click=adress)
+                ft.Text(f"Выбранное дополнительное блюдо к пицце: {adding.value}, стоимость дополнительного блюда: {adding_price.value} рублей.")
             )
         else:
-            page.add(
-                ft.Text(f"Выбранное дополнительное блюдо к пицце: {adding.value}, стоимость дополнительного блюда: {adding_price.value} рублей."),
+            summary_price.value = pizza_price.value
+        page.add(
+                ft.Text(f"Общая стоимость заказа: {summary_price.value} рублей."),
                 ft.ElevatedButton('Выбрать место доставки', on_click=adress)
-            )
+        )
         page.update
+
     def adress(e):
         page.add(
             adress_of_payer,
             ft.ElevatedButton('Сохранить адрес', on_click=end_screen)
         )
         page.update
+
     def end_screen(e):
         page.clean()
-        if adding.value == 'Ничего':
-            page.add(
-                ft.Text(f"Пицца {pizza_choice.value} стоимостью {pizza_price.value} рублей будет доставлена по адресу {adress_of_payer.value} примерно через 40 минут."),
-                ft.Text('Если хотите сделать новый заказ, перезапустите приложение, многоразовые заказы пока в разработке. Спасибо за использование нашего сервиса!')
-            )
-        else:
-            page.add(
-                ft.Text(f"Пицца {pizza_choice.value} стоимостью {pizza_price.value} рублей и дополнительное блюдо {adding.value} стоимостью {adding_price.value} рублей будут доставлены по адресу {adress_of_payer.value} примерно через 40 минут."),
-                ft.Text('Если хотите сделать новый заказ, перезапустите приложение, многоразовые заказы пока в разработке. Спасибо за использование нашего сервиса!')
-            )
+        page.add(
+            ft.Text(f"Ваш заказ общей стоимостью {summary_price.value} рублей будет доставлен по адресу {adress_of_payer.value} примерно через 40 минут."),
+            ft.Text('Если хотите сделать новый заказ, перезапустите приложение, множественные заказы пока в разработке. Спасибо за использование нашего сервиса!')
+        )
         page.update
+
     page.add(
         ft.ElevatedButton('Запустить приложение', on_click=start)
     )
