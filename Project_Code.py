@@ -1,8 +1,13 @@
 import flet as ft # Добавляем библиотеку flet
+import pandas as pd
 
 
 def main(page: ft.Page):
-    greetings1 = ft.Text('Здравствуйте, пользователь! Вы зашли в программу для заказа пиццы.')
+    register_username = ft.TextField(label='Введите здесь своё имя', width=700)
+    register_password = ft.TextField(label='Введите здесь свой пароль', width=700)
+    auth_username = ft.TextField(label='Введите здесь своё имя', width=700)
+    auth_password = ft.TextField(label='Введите здесь свой пароль', width=700)
+    greetings1 = ft.Text(f'Здравствуйте, {auth_username}! Вы зашли в программу для заказа пиццы.')
     greetings2 = ft.Text('Чтобы сделать свой заказ, нажмите на кнопку "Сделать новый заказ".')
     greetings3 = ft.Text('Чтобы просмотреть меню нашего сервиса, нажмите кнопку "Показать меню".') # Приветственные слова
     pizza_choice = ft.Dropdown(
@@ -64,13 +69,77 @@ def main(page: ft.Page):
     summary_price = ft.Text('') # Переменная для общей цены заказа
     adress_of_payer = ft.TextField(label='Введите здесь свой адрес', width=500) # Переменная для адреса заказывающего
 
-    def start(e): # Функция старта приложения
+    def start(e):
+        page.clean()
+        page.add(
+            ft.Text('Здравствуйте, пользователь! Прежде чем начать пользоваться нашим приложением, зайдите в свой аккаунт.\n'
+                    'Если у вас нет аккаунта, вы можете его создать, нажав кнопку "Создать аккаунт".\n'
+                    'Если аккаунт уже существует, вы можете войти в него, нажав кнопку "Войти в аккаунт".'),
+        )
+        page.add(ft.Row(controls=[ft.ElevatedButton('Создать аккаунт', on_click=register), ft.ElevatedButton('Войти в аккаунт', on_click=auth)]))
+        page.update
+
+    def register(e):
+        page.clean()
+        page.add(
+            ft.Text('Чтобы создать новый аккаунт, введите своё имя пользователя и пароль в отведённые ячейки.\n'
+                    'Пароль обязательно должен содержать хотя бы одну букву, иначе система не сможет впоследствии считать его.'),
+            register_username,
+            register_password,
+            ft.ElevatedButton('Сохранить аккаунт', on_click=register_success)
+        )
+        page.update
+
+    def register_success(e):
+        users = pd.read_csv('DataFrame.csv')
+        page.clean()
+        new_user = pd.DataFrame({'Name': [register_username.value], 'Password': [register_password.value]})
+        users = pd.concat([users, new_user], ignore_index=True)
+        users.to_csv('DataFrame.csv', index=False)
+        page.add(
+            ft.Text('Аккаунт успешно зарегистрирован! Теперь вы можете войти в него, нажав кнопку ниже.'),
+            ft.ElevatedButton('Войти в аккаунт', on_click=auth)
+        )
+        page.update
+
+    def auth(e):
+        page.clean()
+        page.add(
+            ft.Text('Чтобы войти в аккаунт, введите в поля ниже свои имя пользователя и пароль.'),
+            auth_username,
+            auth_password,
+            ft.ElevatedButton('Войти в аккаунт', on_click=auth_check)
+        )
+        page.update
+
+    def auth_check(e):
+        page.clean()
+        users = pd.read_csv('DataFrame.csv')
+        account_enter = False
+        for i in range(len(users)):
+            username_check = users['Name'].iloc[i]
+            password_check = users['Password'].iloc[i]
+            if auth_username.value == username_check and auth_password.value == password_check:
+                page.add(
+                    ft.Text('Вы успешно зашли в свой аккаунт!'),
+                    ft.ElevatedButton('Перейти к заказу пиццы', on_click=main_page)
+                )
+                account_enter = True
+                break
+        if account_enter == False:
+            page.add(
+                ft.Text('Скорее всего, вы ошиблись с именем или паролем, либо такого аккаунта не существует.\n'
+                        'Попробуйте ещё раз путём перезапуска приложения.')
+            )
+        page.update
+
+    def main_page(e): # Функция старта приложения
         page.clean()
         page.add(
             greetings1,
             greetings2,
             greetings3
-        )
+        ) # Добавляем приветственные слова
         page.add(ft.Row(controls=[ft.ElevatedButton('Сделать новый заказ', on_click=new_pizza), ft.ElevatedButton('Показать меню', on_click=menu_func)])) # Кнопки для вывода меню или создания заказа
         page.update
 
