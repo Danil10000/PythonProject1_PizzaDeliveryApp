@@ -1,12 +1,12 @@
 import flet as ft # Добавляем библиотеку flet
-import pandas as pd
+import pandas as pd # Добавляем библиотеку pandas
 
 
 def main(page: ft.Page):
-    register_username = ft.TextField(label='Введите здесь своё имя', width=700)
-    register_password = ft.TextField(label='Введите здесь свой пароль', width=700)
-    auth_username = ft.TextField(label='Введите здесь своё имя', width=700)
-    auth_password = ft.TextField(label='Введите здесь свой пароль', width=700)
+    register_username = ft.TextField(label='Введите здесь своё имя', width=700) # Переменная для информации об имени пользователя при регистрации 
+    register_password = ft.TextField(label='Введите здесь свой пароль', width=700) # Переменная для информации о пароле пользователя при регистрации
+    auth_username = ft.TextField(label='Введите здесь своё имя', width=700) # Переменная для информации об имени пользователя при аутентификации 
+    auth_password = ft.TextField(label='Введите здесь свой пароль', width=700) # Переменная для информации о пароле пользователя при аутентификации 
     greetings1 = ft.Text(f'Здравствуйте, {auth_username}! Вы зашли в программу для заказа пиццы.')
     greetings2 = ft.Text('Чтобы сделать свой заказ, нажмите на кнопку "Сделать новый заказ".')
     greetings3 = ft.Text('Чтобы просмотреть меню нашего сервиса, нажмите кнопку "Показать меню".') # Приветственные слова
@@ -63,73 +63,73 @@ def main(page: ft.Page):
             ft.dropdown.Option('Кока-Кола, 0.5 л'),
             ft.dropdown.Option('Картофель фри'),
             ft.dropdown.Option('Ничего'),
-        ],
+],
     ) # Переменная для добавочного блюда
     adding_price = ft.Text('') # Переменная для цены добавочного блюда
     summary_price = ft.Text('') # Переменная для общей цены заказа
     adress_of_payer = ft.TextField(label='Введите здесь свой адрес', width=500) # Переменная для адреса заказывающего
 
-    def start(e):
+    def start(e): # Функция для выбора между регистрацией и входом в аккаунт
         page.clean()
         page.add(
             ft.Text('Здравствуйте, пользователь! Прежде чем начать пользоваться нашим приложением, зайдите в свой аккаунт.\n'
                     'Если у вас нет аккаунта, вы можете его создать, нажав кнопку "Создать аккаунт".\n'
                     'Если аккаунт уже существует, вы можете войти в него, нажав кнопку "Войти в аккаунт".'),
         )
-        page.add(ft.Row(controls=[ft.ElevatedButton('Создать аккаунт', on_click=register), ft.ElevatedButton('Войти в аккаунт', on_click=auth)]))
+        page.add(ft.Row(controls=[ft.ElevatedButton('Создать аккаунт', on_click=register), ft.ElevatedButton('Войти в аккаунт', on_click=auth)])) # Кнопки для регистрации и входа в аккаунт 
         page.update
 
-    def register(e):
+    def register(e): # Функция для регистрации нового пользователя 
         page.clean()
         page.add(
             ft.Text('Чтобы создать новый аккаунт, введите своё имя пользователя и пароль в отведённые ячейки.\n'
                     'Пароль обязательно должен содержать хотя бы одну букву, иначе система не сможет впоследствии считать его.'),
-            register_username,
-            register_password,
-            ft.ElevatedButton('Сохранить аккаунт', on_click=register_success)
+            register_username, # Имя пользователя 
+            register_password, # Пароль пользователя 
+            ft.ElevatedButton('Сохранить аккаунт', on_click=register_success) # Кнопка для вывода успешной регистрации 
         )
         page.update
 
-    def register_success(e):
-        users = pd.read_csv('DataFrame.csv')
+    def register_success(e): # Функция для вывода успешной регистрации, для сохранения данных о пользователе в csv файле
+        users = pd.read_csv('DataFrame.csv') # Переменная для сохранения таблицы с информацией обо всех пользователях
         page.clean()
-        new_user = pd.DataFrame({'Name': [register_username.value], 'Password': [register_password.value]})
-        users = pd.concat([users, new_user], ignore_index=True)
-        users.to_csv('DataFrame.csv', index=False)
+        new_user = pd.DataFrame({'Name': [register_username.value], 'Password': [register_password.value]}) # Переменная с мини-таблицей с информацией о текущем пользователе для последующего её добавления к общей таблице 
+        users = pd.concat([users, new_user], ignore_index=True) # Совмещение двух таблиц в одну
+        users.to_csv('DataFrame.csv', index=False) # Перевод таблицы из переменной в csv файл
         page.add(
             ft.Text('Аккаунт успешно зарегистрирован! Теперь вы можете войти в него, нажав кнопку ниже.'),
-            ft.ElevatedButton('Войти в аккаунт', on_click=auth)
+            ft.ElevatedButton('Войти в аккаунт', on_click=auth) # Кнопка для перехода на страницу входа в аккаунт 
         )
         page.update
 
-    def auth(e):
+    def auth(e): # Функция для входа в аккаунт 
         page.clean()
         page.add(
             ft.Text('Чтобы войти в аккаунт, введите в поля ниже свои имя пользователя и пароль.'),
-            auth_username,
-            auth_password,
-            ft.ElevatedButton('Войти в аккаунт', on_click=auth_check)
+            auth_username, # Имя пользователя 
+            auth_password, # Пароль пользователя 
+            ft.ElevatedButton('Войти в аккаунт', on_click=auth_check) # Кнопка для проверки наличия такого аккаунта среди зарегистрированных 
         )
         page.update
 
-    def auth_check(e):
+    def auth_check(e): # Функция проверки наличия аккаунта с данной информацией среди существующих
         page.clean()
-        users = pd.read_csv('DataFrame.csv')
-        account_enter = False
-        for i in range(len(users)):
-            username_check = users['Name'].iloc[i]
-            password_check = users['Password'].iloc[i]
-            if auth_username.value == username_check and auth_password.value == password_check:
+        users = pd.read_csv('DataFrame.csv') # Переменная для сохранения таблицы с информацией обо всех пользователях
+        account_enter = False # Индикатор наличия данного аккаунта среди существующих 
+        for i in range(len(users)): # Цикл для перебора всех существующих аккаунтов для проверки
+            username_check = users['Name'].iloc[i] # Имя пользователя из таблицы
+            password_check = users['Password'].iloc[i] # Пароль пользователя из таблицы 
+            if auth_username.value == username_check and auth_password.value == password_check: # Проверка на совпадение данных
                 page.add(
-                    ft.Text('Вы успешно зашли в свой аккаунт!'),
-                    ft.ElevatedButton('Перейти к заказу пиццы', on_click=main_page)
+                    ft.Text('Вы успешно зашли в свой аккаунт!'), # Если аккаунт существует
+ft.ElevatedButton('Перейти к заказу пиццы', on_click=main_page) # Кнопка для перехода к заказу пиццы
                 )
-                account_enter = True
+                account_enter = True # Включение индикатора наличия аккаунта 
                 break
         if account_enter == False:
             page.add(
                 ft.Text('Скорее всего, вы ошиблись с именем или паролем, либо такого аккаунта не существует.\n'
-                        'Попробуйте ещё раз путём перезапуска приложения.')
+                        'Попробуйте ещё раз путём перезапуска приложения.') # Если аккаунт не существует 
             )
         page.update
 
